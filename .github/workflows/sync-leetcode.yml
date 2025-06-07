@@ -1,0 +1,39 @@
+name: Sync LeetCode Solution
+
+on:
+  repository_dispatch:
+    types: [leetcode_sync]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Write solution file
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const p = github.context.payload.client_payload;
+
+            // Determine folder and extension
+            const folder = p.topic || 'Uncategorized';
+            const extMap = { 'C++':'cpp', 'Java':'java', 'Python':'py' };
+            const ext = extMap[p.language] || p.language.toLowerCase();
+
+            // Build path & write
+            const filename = `${p.slug}.${ext}`;
+            const dir = `${folder}`;
+            fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(`${dir}/${filename}`, p.code, 'utf-8');
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add LeetCode: ${{ github.event.client_payload.question }} (${{
+            github.event.client_payload.slug }})" || echo "No changes"
+          git push
