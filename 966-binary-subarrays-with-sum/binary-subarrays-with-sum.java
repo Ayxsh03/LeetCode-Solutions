@@ -1,12 +1,24 @@
 class Solution {
     public int numSubarraysWithSum(int[] nums, int goal) {
         int n = nums.length, count = 0;
-        for(int i = 0;i<n;i++){
-            int sum = 0;
-            for(int j=i;j<n;j++){
-                sum+=nums[j];
-                if(sum==goal) count++;
+        int l = 0, r = 0;
+        int sum = 0;
+        while(r < n){
+            sum += nums[r];
+            if(sum == goal) count++;
+            if(sum > goal){
+                l++;
+                sum = 0;
+                r = l;
+                continue;
             }
+            if(r == n-1){
+                l++;
+                r=l;
+                sum = 0;
+                continue;
+            }
+            r++;
         }
         return count;
     }
