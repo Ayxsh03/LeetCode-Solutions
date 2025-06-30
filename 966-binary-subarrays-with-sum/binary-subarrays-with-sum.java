@@ -1,25 +1,21 @@
 class Solution {
     public int numSubarraysWithSum(int[] nums, int goal) {
-        int n = nums.length, count = 0;
+        return num(nums , goal) - num(nums , goal - 1);
+    }
+
+    int num(int[] nums , int goal){
+        if(goal < 0) return 0; //if goal =0, goal -1 = -1;
         int l = 0, r = 0;
-        int sum = 0;
-        while(r < n){
+        int sum = 0, count = 0;
+        while( r < nums.length){
             sum += nums[r];
-            if(sum == goal) count++;
-            if(sum > goal){
+            while(sum > goal){
+                sum -= nums[l];
                 l++;
-                sum = 0;
-                r = l;
-                continue;
             }
-            if(r == n-1){
-                l++;
-                r=l;
-                sum = 0;
-                continue;
-            }
+            count  += ( r - l  + 1);
             r++;
         }
         return count;
-    }
+    } 
 }
