@@ -8,7 +8,7 @@ class Solution {
             char c = s.charAt(r);
             freq[c -'A']++;  // Map char to 0-25
             maxFreq = Math.max(maxFreq, freq[c - 'A']);
-            
+
             int totalChars = r - l + 1;
             if (totalChars - maxFreq > k) {
                 freq[s.charAt(l) - 'A']--; // Shrink window
@@ -17,6 +17,7 @@ class Solution {
             maxLen = Math.max(maxLen, r - l + 1);
             r++;
         }
+        System.gc();
         return maxLen;
     }
 }
