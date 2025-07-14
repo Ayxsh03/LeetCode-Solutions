@@ -1,13 +1,12 @@
 class Solution {
     public int shipWithinDays(int[] weights, int days) {
-        int low = Integer.MAX_VALUE;
-        int high = 0;
+        int low = 0, high = 0;
         for(int weight: weights){
-            high += weight;
-            low = Math.min(low, weight);
+            high += weight; // Max must be if all is shipped in 1 day
+            low = Math.max(low, weight); 
+            //Min capacity must be max weights
         }
         int ans = 0;
-
         while (low <= high){
             int mid = low + (high - low) / 2;
             if (isValid(weights, mid, days)) {
@@ -20,16 +19,14 @@ class Solution {
     }
 
     private boolean isValid(int[] weights, int capacity, int days){
-        int sum = 0, total = 0;
+        int sum = 0, total = 1; //day 1
         for (int weight : weights) {
-            if(weight > capacity) return false;
             sum += weight;
             if(sum > capacity){
                 total++;
                 sum = weight;
             }
         }
-        total++;
         return total <= days;
     }
 }
