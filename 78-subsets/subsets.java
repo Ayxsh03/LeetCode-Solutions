@@ -1,17 +1,19 @@
 class Solution {
     public List<List<Integer>> subsets(int[] nums) {
         List<List<Integer>> list = new ArrayList<>();
-        int n = nums.length;
-        int subsets = 1 << n;
-        for(int num = 0; num < subsets; num++){
-            List<Integer> ans = new ArrayList<>();
-            for(int i = 0; i < n; i++){
-                if((num & (1 << i)) != 0){ //set bit
-                    ans.add(nums[i]);
-                }
-            }
-            list.add(ans);
-        }
+        findSubset(0, new ArrayList<>(), list, nums);
         return list;
+    }
+
+    public void findSubset(int index, List<Integer> ans, List<List<Integer>> list,int[] nums){
+        int n = nums.length;
+        if(index == n){
+            list.add(new ArrayList<>(ans));
+            return;
+        }
+        ans.add(nums[index]);
+        findSubset(index + 1, ans, list, nums);
+        ans.remove(ans.size()-1);
+        findSubset(index + 1, ans, list, nums);
     }
 }
