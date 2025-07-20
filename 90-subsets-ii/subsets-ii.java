@@ -1,31 +1,21 @@
 class Solution {
     public List<List<Integer>> subsetsWithDup(int[] nums) {
-        // sorting
-        Arrays.sort(nums);
-
-        List<List<Integer>> result = new ArrayList<>();
-        List<Integer> numList = new ArrayList<>();
-        result.add(new ArrayList<>());
-        subsets(0, nums, numList, result, true);
-        return result;
+        Arrays.sort(nums);  // Sort to bring duplicates together
+        List<List<Integer>> list = new ArrayList<>();
+        findSubset2(0, new ArrayList<>(), list, nums);
+        return list;
     }
 
-    private void subsets(int offset, int[] nums, List<Integer> numList, List<List<Integer>> result, boolean isPicked) {
-        // base case
-        if (offset >= nums.length) {
-            return;
+    public void findSubset2(int index, List<Integer> ans, List<List<Integer>> list, int[] nums) {
+        list.add(new ArrayList<>(ans));
+
+        for (int i = index; i < nums.length; i++) {
+            // Skip duplicates
+            if (i > index && nums[i] == nums[i - 1]) continue;
+
+            ans.add(nums[i]);
+            findSubset2(i + 1, ans, list, nums);
+            ans.remove(ans.size() - 1);  // backtrack
         }
-        int val = nums[offset];
-        // not pick
-        subsets(offset + 1, nums, numList, result, false);
-        // duplicate check
-        if (offset >= 1 && nums[offset - 1] == nums[offset] && isPicked == false) {
-            return;
-        }
-        // pick
-        numList.add(val);
-        subsets(offset + 1, nums, numList, result, true);
-        result.add(new ArrayList<>(numList)); // add to the result list
-        numList.remove(numList.size() - 1);
     }
 }
