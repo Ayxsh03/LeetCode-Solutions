@@ -2,12 +2,11 @@ class Solution {
     public boolean exist(char[][] board, String word) {
         int m = board.length;
         int n = board[0].length;
-        boolean[][] isVisited = new boolean[m][n];
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (board[i][j] == word.charAt(0)) {
-                    if (dfs(0, word, board, isVisited, i, j)) {
+                    if (dfs(0, word, board, i, j)) {
                         return true;
                     }
                 }
@@ -15,27 +14,25 @@ class Solution {
         }
         return false;
     }
-    private boolean dfs(int index, String word, char[][] board, boolean[][] isVisited, int i, int j) {
-        if (index == word.length()) return true;
+    private boolean dfs(int index, String word, char[][] board, int i, int j){
+        if(index == word.length()) return true;
+        if(i < 0 || i >= board.length || j < 0 || j >= board[0].length) return false;
+        if(board[i][j] != word.charAt(index)) return false;
+        if(board[i][j] == '#') return false;
 
-        // Bounds check + visited check
-        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || isVisited[i][j]) {
-            return false;
+        char temp = board[i][j];
+        board[i][j] = '#';
+
+        for(int k = 0; k < 4; k++){
+            int new_i = i + dx[k];
+            int new_j = j + dy[k];
+            if(dfs(index + 1, word, board, new_i, new_j)) return true;
         }
 
-        if (board[i][j] != word.charAt(index)) return false;
+        board[i][j] = temp;
 
-        isVisited[i][j] = true;
-
-        // Explore all 4 directions
-        boolean found = dfs(index + 1, word, board, isVisited, i - 1, j) ||  // up
-                        dfs(index + 1, word, board, isVisited, i + 1, j) ||  // down
-                        dfs(index + 1, word, board, isVisited, i, j - 1) ||  // left
-                        dfs(index + 1, word, board, isVisited, i, j + 1);    // right
-
-        // Backtrack
-        isVisited[i][j] = false;
-
-        return found;
+        return false;
     }
+    static int[] dx = {1, -1, 0, 0};
+    static int[] dy = {0, 0, 1, -1};
 }
