@@ -27,7 +27,7 @@ class Solution {
             prevGroupEnd = groupStart;
 
             groupStart.next = nextNode;
-            temp = temp.next;
+            temp = nextNode;
         }
         return dummy.next;
     }
