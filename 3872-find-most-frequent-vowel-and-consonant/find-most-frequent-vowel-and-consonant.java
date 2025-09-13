@@ -1,16 +1,16 @@
 class Solution {
-    public int maxFreqSum(String s){
-        Map<Character, Integer> mp = new HashMap<>();
-        for (char ch : s.toCharArray()) mp.put(ch, mp.getOrDefault(ch, 0) + 1);
-
-        int vowel = 0;
-        int consonant = 0;
-        for(char c = 'a'; c <= 'z'; c++){
-            if(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'){
-                vowel = Math.max(vowel, mp.getOrDefault(c, 0));
-            }
-            else consonant = Math.max(consonant, mp.getOrDefault(c, 0));
+    public int maxFreqSum(String s) {
+        s = s.toLowerCase();
+        int arr[] = new int[26];
+        for(int i = 0; i < s.length(); i++){
+            char ch = s.charAt(i);
+            arr[ch - 'a']++;
         }
-        return vowel + consonant;
+        int vowels = 0, cons = 0;
+        for(int i = 0; i < 26; i++){
+            if(( i == 0 || i == 4 || i == 8 || i == 14 || i == 20) && arr[i] > vowels) vowels = arr[i];
+            else if(i != 0 && i != 4 && i != 8 && i != 14 && i != 20 && arr[i]>cons) cons = arr[i];
+        }
+        return vowels + cons;
     }
 }
