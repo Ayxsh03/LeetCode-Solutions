@@ -10,27 +10,41 @@ class Node {
 
 class Solution {
     public Node flatten(Node head) {
-        if (head == null) return null;
-        List<Integer> ans = new ArrayList<>();
-        dfs(head, ans);
-
-        Node newHead = new Node(ans.get(0));
-        Node temp = newHead;
-        for (int i = 1; i < ans.size(); i++) {
-            Node newNode = new Node(ans.get(i));
-            newNode.prev = temp;
-            temp.next = newNode;
-            temp.child = null;
-            temp = temp.next;
-        }
-        return newHead;
+        dfs(head);
+        return head;
     }
+    
+    private Node dfs(Node temp) {
+        if (temp == null) return null;
+        // If this node has no next and no child → it's a tail
+        if (temp.next == null && temp.child == null) return temp;
+        
+        Node nextNode = temp.next;
+        Node child = temp.child;
+        Node parent = temp;
 
-    private void dfs(Node temp, List<Integer> ans) {
-        if (temp == null) return;
-        ans.add(temp.val);
+        Node tail = null;
 
-        if (temp.child != null) dfs(temp.child, ans);
-        dfs(temp.next, ans);
+        // If child exists, flatten it first
+        if (child != null) {
+            Node childTail = dfs(child); // flatten the child list
+
+            // Connect parent -> child
+            parent.next = child;
+            child.prev = parent;
+            parent.child = null; // important: remove child pointer
+
+            // Connect child's tail -> nextNode
+            if (nextNode != null) {
+                childTail.next = nextNode;
+                nextNode.prev = childTail;
+            }
+
+            tail = childTail; // child's tail may become the new tail
+        }
+
+        // Continue flattening the rest (nextNode)
+        if (nextNode != null) tail = dfs(nextNode);
+        return tail != null ? tail : temp;
     }
 }
