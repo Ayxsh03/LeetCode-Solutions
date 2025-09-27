@@ -1,64 +1,53 @@
 class LRUCache {
-    Node dummyHead = new Node(-1, -1), dummyTail = new Node(-1, -1);
-    Map<Integer, Node> map = new HashMap();
-    int capacity;
+
+    ArrayList<Pair> cache;
+    int n;
 
     public LRUCache(int capacity) {
-        this.capacity = capacity;
-        dummyHead.next = dummyTail;
-        dummyTail.prev = dummyHead;
+        cache = new ArrayList<>();
+        n = capacity;
     }
     
     public int get(int key) {
-        if (!map.containsKey(key)) return -1;
-        Node node = map.get(key);
-        deleteNode(node);
-        insertAfterHead(node);
-        return node.value;
+        for (int i = 0; i < cache.size(); i++) {
+            Pair p = cache.get(i);
+            if (p.key == key) {
+                // Move accessed pair to the end (most recently used)
+                cache.remove(i);
+                cache.add(p);
+                return p.value;
+            }
+        }
+        return -1; // Not found
     }
     
     public void put(int key, int value) {
-        if(map.containsKey(key)) {
-            Node node = map.get(key);
-            node.value = value;
-            deleteNode(node);
-            insertAfterHead(node);
-        }else{
-            if(map.size() == capacity) {
-                Node LRU = dummyTail.prev;
-                deleteNode(LRU);
-                map.remove(LRU.key);
+        // If key already exists, update it and move to end
+        for (int i = 0; i < cache.size(); i++) {
+            if (cache.get(i).key == key) {
+                cache.remove(i);
+                cache.add(new Pair(key, value));
+                return;
             }
-            Node node = new Node(key, value);
-            map.put(key, node);
-            insertAfterHead(node);
+        }
+        
+        // If capacity not full, just add
+        if (cache.size() < n) {
+            cache.add(new Pair(key, value));
+        } 
+        // Otherwise remove least recently used (front) and add new
+        else {
+            cache.remove(0);
+            cache.add(new Pair(key, value));
         }
     }
 
-    class Node{
-        Node prev, next;
+    private static class Pair {
         int key, value;
-        Node(int _key, int _value) {
-            key = _key;
-            value = _value;
+        Pair(int key, int value) {
+            this.key = key;
+            this.value = value;
         }
-    }
-
-    private void deleteNode(Node node) {
-        Node prev = node.prev;
-        Node next = node.next;
-        prev.next = next;
-        next.prev = prev;
-        node.prev = null;
-        node.next = null;
-    }
-
-    private void insertAfterHead(Node node) {
-        Node next = dummyHead.next;
-        node.next = next;
-        node.prev = dummyHead;
-        dummyHead.next = node;
-        next.prev = node;
     }
 }
 
