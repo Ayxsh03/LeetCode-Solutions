@@ -1,29 +1,29 @@
 public class LFUCache {
     class Node {
-        int key, val, cnt;
+        int key, val, count;
         Node prev, next;
         Node(int key, int val) {
             this.key = key;
             this.val = val;
-            cnt = 1;
+            count = 1;
         }
     }
     
     class DLList {
-        Node head, tail;
+        Node dummyHead, dummyTail;
         int size;
         DLList() {
-            head = new Node(0, 0);
-            tail = new Node(0, 0);
-            head.next = tail;
-            tail.prev = head;
+            dummyHead = new Node(-1, -1);
+            dummyTail = new Node(-1, -1);
+            dummyHead.next = dummyTail;
+            dummyTail.prev = dummyHead;
         }
         
-        void add(Node node) {
-            head.next.prev = node;
-            node.next = head.next;
-            node.prev = head;
-            head.next = node;
+        void insertAfterHead(Node node) {
+            dummyHead.next.prev = node;
+            node.next = dummyHead.next;
+            node.prev = dummyHead;
+            dummyHead.next = node;
             size++;
         }
         
@@ -33,9 +33,9 @@ public class LFUCache {
             size--;
         }
         
-        Node removeLast() {
-            if (size > 0) {
-                Node node = tail.prev;
+        Node removeLRU(){ //LRU
+            if(size > 0){
+                Node node = dummyTail.prev;
                 remove(node);
                 return node;
             }
@@ -43,10 +43,12 @@ public class LFUCache {
         }
     }
     
-    int capacity, size, min;
+    int capacity, size;
+    int min; //always remembers the current lowest frequency among all nodes in the cache
     Map<Integer, Node> nodeMap;
     Map<Integer, DLList> countMap;
-    public LFUCache(int capacity) {
+
+    LFUCache(int capacity) {
         this.capacity = capacity;
         nodeMap = new HashMap<>();
         countMap = new HashMap<>();
@@ -72,24 +74,26 @@ public class LFUCache {
             nodeMap.put(key, node);
             if (size == capacity) {
                 DLList lastList = countMap.get(min);
-                nodeMap.remove(lastList.removeLast().key);
+                nodeMap.remove(lastList.removeLRU().key);
                 size--;
             }
             size++;
             min = 1;
-            DLList newList = countMap.getOrDefault(node.cnt, new DLList());
-            newList.add(node);
-            countMap.put(node.cnt, newList);
+            // If there’s already a DLList for this frequency (node.count), return it
+            // If not, create a fresh empty DLList.
+            DLList newList = countMap.getOrDefault(node.count, new DLList());
+            newList.insertAfterHead(node);
+            countMap.put(node.count, newList);
         }
     }
     
     private void update(Node node) {
-        DLList oldList = countMap.get(node.cnt);
+        DLList oldList = countMap.get(node.count);
         oldList.remove(node);
-        if (node.cnt == min && oldList.size == 0) min++; 
-        node.cnt++;
-        DLList newList = countMap.getOrDefault(node.cnt, new DLList());
-        newList.add(node);
-        countMap.put(node.cnt, newList);
+        if (node.count == min && oldList.size == 0) min++; 
+        node.count++;
+        DLList newList = countMap.getOrDefault(node.count, new DLList());
+        newList.insertAfterHead(node);
+        countMap.put(node.count, newList);
     }
 }
