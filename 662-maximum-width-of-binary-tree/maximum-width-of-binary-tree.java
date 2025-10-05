@@ -17,14 +17,14 @@ class Solution {
 
         while(!q.isEmpty()){
             int size = q.size();
-            int left = q.peekFirst().index;
+            int left = q.peekFirst().index, min = left; // Normalize
             int right = q.peekLast().index;
             maxWidth = Math.max(right - left + 1, maxWidth); //levelwidth
 
             for(int i = 0; i < size; i++){
                 Pair p = q.pollFirst();
                 TreeNode curr = p.node;
-                int index = p.index;
+                int index = p.index - min; // Normalize
                 if(curr.left != null){
                     q.add(new Pair(curr.left, 2 * index + 1));
                 }
