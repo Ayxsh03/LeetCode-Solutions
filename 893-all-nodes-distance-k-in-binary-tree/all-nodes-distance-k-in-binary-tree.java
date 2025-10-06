@@ -1,54 +1,43 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
         List<Integer> ans = new ArrayList<>();
         if (root == null || target == null) return ans;
 
-        // 1) Build parent map with a DFS
-        Map<TreeNode, TreeNode> parent = new HashMap<>();
-        buildParent(root, null, parent);
+        Map<TreeNode, TreeNode> map = new HashMap<>();
+        dfs(root, map);
 
-        // 2) BFS from target
+        // BFS from target
         Queue<TreeNode> q = new ArrayDeque<>();
-        Set<TreeNode> seen = new HashSet<>();
+        Set<TreeNode> vis = new HashSet<>(); //given all node.val unique
         q.add(target);
-        seen.add(target);
+        vis.add(target);
         int level = 0;
 
-        while (!q.isEmpty()) {
+        while(!q.isEmpty()){
             int size = q.size();
-            if (level == k) {                  // collect everything currently in the queue
-                for (TreeNode n : q) ans.add(n.val);
+            if(level == k){
+                for(TreeNode n : q) ans.add(n.val);
                 break;
             }
-
-            for (int i = 0; i < size; i++) {
-                TreeNode cur = q.remove();
-
-                // push neighbors if they exist and weren't visited
-                if (cur.left != null && seen.add(cur.left))  q.add(cur.left);
-                if (cur.right != null && seen.add(cur.right)) q.add(cur.right);
-                TreeNode p = parent.get(cur);
-                if (p != null && seen.add(p)) q.add(p);
+            for (int i = 0; i < size; i++){
+                TreeNode curr = q.remove();
+                // push if !vis.contains(node) -> q.(node) vis.add(node)
+                // vis.add(node) return true only if node wasn’t already in the set
+                if(curr.left != null && vis.add(curr.left))  q.add(curr.left);
+                if(curr.right != null && vis.add(curr.right)) q.add(curr.right);
+                TreeNode parent = map.get(curr);
+                if(parent != null && vis.add(parent)) q.add(parent);
             }
             level++;
         }
         return ans;
     }
 
-    private void buildParent(TreeNode node, TreeNode par, Map<TreeNode, TreeNode> parent) {
-        if (node == null) return;
-        if (par != null) parent.put(node, par);
-        buildParent(node.left, node, parent);
-        buildParent(node.right, node, parent);
-    
+    void dfs(TreeNode node, Map<TreeNode, TreeNode> map){
+        if(node == null) return;
+        if(node.left != null) map.put(node.left, node); //child , parent
+        dfs(node.left, map);
+        if(node.right != null) map.put(node.right, node); //child , parent
+        dfs(node.right, map);
     }
 }
