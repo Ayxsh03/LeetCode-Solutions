@@ -1,14 +1,22 @@
 class Solution {
+    int count = 0;   // how many nodes we've visited in-order
+    int ans = -1;    // the kth value once found
+
     public int kthSmallest(TreeNode root, int k) {
-        List<Integer> list = new ArrayList<>();
-        inorder(root, list);
-        return list.get(k - 1);
+        inorder(root, k);
+        return ans;
     }
 
-    private void inorder(TreeNode root, List<Integer> list) {
-        if (root == null) return;
-        inorder(root.left, list);
-        list.add(root.val);
-        inorder(root.right, list);
+    void inorder(TreeNode root, int k) {
+        if (root == null || ans != -1) return;
+
+        inorder(root.left, k);
+
+        if (++count == k) {      // visit current node
+            ans = root.val;
+            return;
+        }
+
+        inorder(root.right, k);
     }
 }
