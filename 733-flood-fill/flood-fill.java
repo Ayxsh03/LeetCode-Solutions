@@ -1,27 +1,29 @@
 class Solution {
-    // Up, Right, Down, Left
     public int[] dx = {-1, 0, 1, 0};
     public int[] dy = {0, 1, 0, -1};
-
+    
     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
-        int[][] ans = image;
-        int oldColor = image[sr][sc];
-        if(oldColor == color) return image;
-        
-        ans[sr][sc] = color;
-        dfs(sr, sc, image, ans, oldColor, color);
-        return ans;
-  }
+        int initial = image[sr][sc];
+        if (initial == color) return image;
 
-    public void dfs(int r, int c,int[][] image, int[][] ans, int oldColor, int color){
-        for(int i = 0; i < 4; i++){
-            int row = dx[i] + r;
-            int col = dy[i] + c;
-            if(row >= ans.length || row < 0 || col >= image[0].length || col < 0) continue;
-            if(image[row][col] == oldColor){
-                ans[row][col] = color;
-                dfs(row, col, image, ans, oldColor, color);
+        dfs(sr, sc, image, color, initial);
+        return image;
+    }
+
+    private void dfs(int row, int col, int[][] image, int color, int initial) {
+        image[row][col] = color;
+        for (int i = 0; i < 4; i++) {
+            int newRow = row + dx[i];
+            int newCol = col + dy[i];
+            if (isValid(newRow, newCol, image, initial)) {
+                dfs(newRow, newCol, image, color, initial);
             }
         }
+    }
+
+    private boolean isValid(int row, int col, int[][] image, int initial) {
+        int m = image.length;
+        int n = image[0].length;
+        return row >= 0 && col >= 0 && row < m && col < n && image[row][col] == initial;
     }
 }
