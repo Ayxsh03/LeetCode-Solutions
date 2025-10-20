@@ -1,40 +1,32 @@
 class Solution {
     public boolean isBipartite(int[][] graph) {
-        int n = graph.length;
-        int[] colour = new int[n]; // also acts as visited array
-        Arrays.fill(colour, -1);
+        int V = graph.length;
+        int[] color = new int[V]; // 0: uncolored, 1: color 1, 2: color 2
 
-        for (int i = 0; i < n; i++) {
-            if (colour[i] == -1) {
-                Queue<Pair> q = new LinkedList<>();
-                q.add(new Pair(i, 1));   // start with color 1
-                colour[i] = 1;
-
-                while (!q.isEmpty()) {
-                    Pair p = q.poll();
-                    int node = p.first;
-                    int col = p.second;
-
-                    for (int nei : graph[node]) {
-                        if (colour[nei] == -1) {
-                            int newColour = (col == 1) ? 2 : 1;
-                            colour[nei] = newColour;
-                            q.add(new Pair(nei, newColour));
-                        }
-                        else if(colour[nei] == col) return false;
-                    }
-                }
+        for (int i = 0; i < V; i++) {
+            if (color[i] == 0) { // If the node is uncolored
+                if (!check(i, graph, color)) return false;
             }
         }
         return true;
     }
 
-    class Pair {
-        int first;
-        int second;
-        Pair(int first, int second){
-            this.first = first;
-            this.second = second;
+    public boolean check(int start, int[][] graph, int[] color) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(start);
+        color[start] = 1; // Assign the first color
+
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            for (int neighbor : graph[node]) {
+                if (color[neighbor] == 0) { // If the neighbor is uncolored
+                    color[neighbor] = (color[node] == 1) ? 2 : 1; // Assign opposite color
+                    q.add(neighbor);
+                } else if (color[neighbor] == color[node]) { // If neighbor has the same color
+                    return false;
+                }
+            }
         }
+        return true;
     }
 }
