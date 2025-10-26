@@ -1,42 +1,38 @@
 class Solution {
     public int networkDelayTime(int[][] times, int n, int k) {
-        // Build adjacency list (0-indexed)
-        List<List<int[]>> adj = new ArrayList<>();
-        for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
-        for (int i = 0; i < times.length; i++) {
-            int u = times[i][0] - 1;
-            int v = times[i][1] - 1;
-            int w = times[i][2];
-            adj.get(u).add(new int[]{v, w});
+        ArrayList<ArrayList<int[]>> adj = new ArrayList<>();
+        for(int i = 0; i <= n; i++){
+            adj.add(new ArrayList<>());
         }
+        for(int e[]:times){
+            int u = e[0], v = e[1], wt = e[2];
+            adj.get(u).add(new int[]{v, wt});
+           
+        }
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[0] - b[0]);
+        int dist[] = new int[n + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[k] = 0;
+        pq.add(new int[]{0, k});
+        while(!pq.isEmpty()){
+            int top[]= pq.poll();
+            int d = top[0];
+            int node = top[1];
 
-        final int INF = (int) 1e9;
-        int[] dist = new int[n];
-        Arrays.fill(dist, INF);
-        int src = k - 1;
-        dist[src] = 0;
+            if(d > dist[node]) continue;
+            for(int[] it:adj.get(node)){
+                int neigh = it[0];
+                int wt = it[1];
 
-        // Min-heap on distance: store as {distance, node}
-        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
-        pq.offer(new int[]{0, src});
-
-        while (!pq.isEmpty()) {
-            int[] cur = pq.poll();
-            int d = cur[0], u = cur[1];
-            if (d > dist[u]) continue; // stale
-
-            for (int[] edge : adj.get(u)) {
-                int v = edge[0], w = edge[1];
-                if (dist[u] + w < dist[v]) {
-                    dist[v] = dist[u] + w;
-                    pq.offer(new int[]{dist[v], v});
+                if(d + wt < dist[neigh]){
+                    dist[neigh] = d + wt;
+                    pq.add(new int[]{dist[neigh], neigh});
                 }
             }
         }
-
         int ans = 0;
-        for (int i = 0; i < n; i++) {
-            if (dist[i] == INF) return -1;
+        for (int i = 1; i <= n; i++) {
+            if (dist[i] == Integer.MAX_VALUE) return -1;
             ans = Math.max(ans, dist[i]);
         }
         return ans;
