@@ -1,44 +1,41 @@
 class Solution {
-    public int findTheCity(int n, int[][] edges, int distanceThreshold){
-        int dist[][] = new int[n][n];
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+        int cost[][] = new int[n][n];
         for(int i = 0; i < n; i++){
-          for(int j = 0; j < n; j++){
-            if(i == j) dist[i][j]=0;
-            else dist[i][j] = Integer.MAX_VALUE;
-          }
+            for(int j = 0; j < n; j++){
+                if(i == j) cost[i][j]=0;
+                else cost[i][j]=(int) 1e9;
+            }
         }
-
-        for(int i = 0; i<edges.length; i++){
+        for(int i = 0; i < edges.length; i++){
             int u = edges[i][0];
             int v = edges[i][1];
             int wt = edges[i][2];
-
-            dist[u][v] = wt;
-            dist[v][u] = wt;
+            cost[u][v] = wt;
+            cost[v][u] = wt;
         }
-
-        for(int via = 0; via < n; via++){
-            for(int i = 0; i < n; i++){
-                for(int j = 0; j < n; j++){  
-                    if(dist[i][via] < 100000000 && dist[via][j] < 100000000)
-                    dist[i][j] = Math.min(dist[i][j], dist[i][via] + dist[via][j]);
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                for(int k = 0; k < n; k++){
+                    cost[j][k] = Math.min(cost[j][k], cost[j][i] + cost[i][k]);
                 }
             }
         }
-
-        int city = -1;
-        int minCityCount = n;
-
+        int store = Integer.MAX_VALUE;
+        int ans = 0;
         for(int i = 0; i < n; i++){
-            int count = 0;
-            for(int j = 0; j < n; j++){
-                if(dist[i][j]<=distanceThreshold) count++;
+            int val=0;
+            for(int j=0; j<n; j++){
+                if(i==j) continue;
+                if(cost[i][j]<=distanceThreshold){
+                    val++;
+                }
             }
-            if(minCityCount >= count){
-                minCityCount = count;
-                city = i;
+            if(val <= store){
+                store = val;
+                ans = i;
             }
         }
-        return city;
+        return ans;
     }
 }
