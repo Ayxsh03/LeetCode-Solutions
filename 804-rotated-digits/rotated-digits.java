@@ -1,7 +1,7 @@
 class Solution {
     public int rotatedDigits(int n) {
         int count = 0;
-        int[] map = {0,1,2,-1,-1,5,6,-1,8,9};
+        int[] state = {0,0,1,-1,-1,1,1,-1,0,1};
 
         for (int i = 1; i <= n; i++) {
             int num = i;
@@ -10,13 +10,11 @@ class Solution {
 
             while (num > 0) {
                 int digit = num % 10;
-                if (map[digit] == -1) { // invalid
+                if (state[digit] == -1) {
                     bad = true;
                     break;
                 }
-                if (digit == 2 || digit == 5 || digit == 6 || digit == 9) {
-                    changed = true;
-                }
+                if (state[digit] == 1) changed = true;
                 num /= 10;
             }
             if (!bad && changed) count++;
