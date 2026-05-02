@@ -9,7 +9,10 @@ class Solution {
             boolean change = false;
             while(num > 0){
                 int last = num % 10;
-                if(badset.contains(last)) bad = true;
+                if(badset.contains(last)){
+                    bad = true;
+                    break;
+                }
                 if(goodset.contains(last)) change = true;
                 num = num/10;
             }
