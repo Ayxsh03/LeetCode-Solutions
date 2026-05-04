@@ -1,32 +1,20 @@
 class Solution {
     public void rotate(int[][] matrix) {
         int n = matrix.length;
-
-        //Transpose
+        int[][] ans = new int[n][n];
         for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                int temp = matrix[i][j];
-                matrix[i][j] = matrix[j][i];
-                matrix[j][i] = temp;
+            for (int j = 0; j < n; j++) {
+                ans[i][j] = matrix[n - j - 1][i];
+                /* Reverse Mapping. 
+                Clockwise is [i][j] -> [j][n - i - 1]  
+                But at ans[0][0], we want matrix[2][0]              
+                */
             }
         }
-        //Reverse Row
-        for (int i = 0; i < n; i++)
-            reverseArr(matrix[i]);
-
-        return;
-    }
-
-    public int[] reverseArr(int[] arr) {
-        int n = arr.length;
-        int i = 0, j = n - 1;
-        while (i < j) {
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-            i++;
-            j--;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = ans[i][j];
+            }
         }
-        return arr;
     }
 }
