@@ -12,9 +12,11 @@ class Solution {
         int n = needle.length();
         if(i + n > hay.length()) return false;
 
-        String s = hay.substring(i, i + n);
-        if(s.equals(needle)) return true;
+        for(int j = 0; j < needle.length(); j++){
+            if(hay.charAt(i + j) != needle.charAt(j))
+                return false;
+        }
 
-        return false;
+        return true;
     }
 }
