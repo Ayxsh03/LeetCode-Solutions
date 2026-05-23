@@ -1,16 +1,12 @@
 class Solution {
     public boolean check(int[] nums) {
-        int breaks = 0;
-        // for(int i = 1; i < nums.length; i++){
-        //     if(nums[i - 1] > nums[i]) breaks++;
-        // }
-        // if(nums[0] < nums[nums.length - 1]) breaks++;
-        for(int i = 0; i < nums.length; i++){
-            if(nums[i] > nums[(i + 1) % nums.length]){
-                breaks++;
-            }
+        int count = 0;
+        int n = nums.length;
+        for(int i = 1; i < n; i++){
+            if(nums[i - 1] > nums[i]) count++;
         }
-        if(breaks > 1) return false;
-        return true;
+        if(nums[n - 1] > nums[0]) count++;
+
+        return (count <= 1);
     }
 }
