@@ -24,9 +24,10 @@ class Solution {
         while(minHeap.size() != 0) {
             // Pop Node and insert its next
             ListNode node = minHeap.poll();
+            if (node.next != null) minHeap.offer(node.next);
+            
             tail.next = node;
             tail = tail.next;
-            if (node.next != null) minHeap.offer(node.next);
         }
 
         return dummy.next;
