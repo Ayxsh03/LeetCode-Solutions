@@ -1,15 +1,22 @@
 class Solution {
     public int maxNumberOfBalloons(String text) {
-        int[] map = new int[26];
-        for(char ch : text.toCharArray()) map[ch - 'a']++;
-        int b = map[1];
-        int a = map[0];
-        int l = map[11];
-        int o = map[14];
-        int n = map[13];
-
-        return Math.min(
-            Math.min(b, a),
-            Math.min(Math.min(l/2, o/2), n));
+        int b = 0, a = 0, l = 0, o = 0, n = 0;
+        
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case 'b': b++; break;
+                case 'a': a++; break;
+                case 'l': l++; break;
+                case 'o': o++; break;
+                case 'n': n++; break;
+            }
+        }
+        
+        // 'l' and 'o' are needed twice per word, so divide their counts by 2
+        l = l / 2;
+        o = o / 2;
+        
+        // The answer is the limiting factor among all required letters
+        return Math.min(b, Math.min(a, Math.min(l, Math.min(o, n))));
     }
 }
