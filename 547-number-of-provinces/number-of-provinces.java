@@ -1,23 +1,33 @@
 class Solution {
     public int findCircleNum(int[][] isConnected) {
+        // We have a graph as a matrix
         int n = isConnected.length;
-        int[] visited = new int[n];
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+            for (int j = 0; j < n; j++) {
+                if (isConnected[i][j] == 1 && i != j) {
+                    adj.get(i).add(j);
+                }
+            }
+        }
+
+        boolean[] vis = new boolean[n];
         int count = 0;
         for (int i = 0; i < n; i++) {
-            if (visited[i] == 0) {
+            if (!vis[i]) {
                 count++;
-                dfs(i, visited, isConnected);
+                dfs(i, vis, adj);
             }
         }
         return count;
-    }
 
-    void dfs(int node, int[] visited, int[][] matrix){
-        visited[node] = 1;
-        for (int i = 0; i < matrix.length; i++) {
-            if(matrix[node][i] == 1 && visited[i] == 0) {
-                dfs(i, visited, matrix);
-            }
+    }
+    public void dfs(int node, boolean[] vis, List<List<Integer>> adj) {
+        vis[node] = true;
+        for (int neigh : adj.get(node)) {
+            if (!vis[neigh]) dfs(neigh, vis,adj);
         }
+        return;
     }
 }
